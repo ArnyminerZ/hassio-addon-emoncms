@@ -6,8 +6,8 @@ FROM ${BUILD_FROM}
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 # Setup base
-RUN \
-    apk add --no-cache \
+# Install dependencies
+RUN apk add --no-cache \
         mariadb-client \
         nginx=1.20.2-r0 \
         redis=6.2.6-r0 \
@@ -25,11 +25,17 @@ RUN \
         php7-pecl-redis=5.3.4-r0 \
         php7=7.4.25-r1 \
         --repository=http://dl-cdn.alpinelinux.org/alpine/edge/community \
-    \
-    && apk add --no-cache --virtual .build-dependencies \
-        git=2.32.0-r0 \
-    \
-    && git clone --branch 10.8.5 --depth=1 \
+    apk add --no-cache --virtual .build-dependencies \
+        git=2.32.0-r0
+
+# Install python/pip
+ENV PYTHONUNBUFFERED=1
+RUN apk add --update --no-cache python3 && ln -sf python3 /usr/bin/python
+RUN python3 -m ensurepip
+RUN pip3 install --no-cache --upgrade pip setuptools
+
+# Download EmonCMS and modules
+RUN git clone --branch 10.8.5 --depth=1 \
         https://github.com/emoncms/emoncms.git /var/www/emoncms ; cd /var/www/emoncms \
     && git clone --branch 2.1.5 --depth=1 \
         https://github.com/emoncms/dashboard.git /var/www/emoncms/Modules/dashboard \
@@ -50,13 +56,13 @@ RUN \
     && rm -f -r /var/www/emoncms/Modules/app/.git \
     && rm -f -r /var/www/emoncms/Modules/device/.git \
     && rm -f -r /var/www/emoncms/Modules/backup/.git \
-    \
-    && pip3 install redis \
-    \
     && find /var/www/emoncms -type f -name ".htaccess" -depth -exec rm -f {} \; \
     && find /var/www/emoncms -type f -name "*.md" -depth -exec rm -f {} \; \
     && find /var/www/emoncms -type f -name ".gitignore" -depth -exec rm -f {} \; \
     && find /var/www/emoncms -type f -name ".empty" -depth -exec rm -f {} \;
+
+# Install the backup module
+RUN pip3 install redis
 
 # Copy root filesystem
 COPY rootfs /
