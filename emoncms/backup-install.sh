@@ -34,19 +34,13 @@ fi
 
 # php_ini=/etc/php5/apache2/php.ini
 PHP_VER=$(php -v | head -n 1 | cut -d " " -f 2 | cut -f1-2 -d"." )
-php_ini=/etc/php$PHP_VER/apache2/php.ini
-# echo "- PHP Version: $PHP_VER"
+php_ini=/etc/php$PHP_VER/php.ini
+echo "- PHP Version: $PHP_VER"
 
-echo "- creating /etc/php$PHP_VER/mods-available/emoncmsbackup.ini"
-cat << EOF |
-post_max_size = 3G
-upload_max_filesize = 3G
-upload_tmp_dir = ${upload_location}
-EOF
-tee /etc/php$PHP_VER/mods-available/emoncmsbackup.ini
-
-echo "- phpenmod emoncmsbackup"
-phpenmod emoncmsbackup
+echo "- configuring PHP ($php_ini)..."
+crudini --set "$php_ini" PHP post_max_size "3G"
+crudini --set "$php_ini" PHP upload_max_filesize "3G"
+crudini --set "$php_ini" PHP upload_tmp_dir "$upload_location"
 
 # Create uploads folder
 if [ ! -d $backup_location ]; then
@@ -58,7 +52,7 @@ fi
 if [ ! -d $backup_location/uploads ]; then
     echo "- creating $backup_location/uploads directory"
     mkdir $backup_location/uploads
-    chown www-data:$user $backup_location/uploads -R
+    chown $user:$user $backup_location/uploads -R
 fi
 
 echo "- restarting nginx"
