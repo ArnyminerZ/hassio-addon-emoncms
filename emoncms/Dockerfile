@@ -69,12 +69,15 @@ COPY service-runner /etc/init.d/service-runner
 RUN chmod +x /etc/init.d/service-runner \
     && chown root:root /etc/init.d/service-runner \
     # Add the service-runner service to RC
-    && rc-update add service-runner \
-    # Install the backup module
-    && chmod +x /var/www/emoncms/Modules/backup/install.sh \
-    && chown root:root /var/www/emoncms/Modules/backup/install.sh
+    && rc-update add service-runner
+# Copy the backup install script
+COPY backup-install.sh /var/www/emoncms/Modules/backup/backup-install.sh
+RUN \
+    # Ensure permissions for install script
+    chmod +x /var/www/emoncms/Modules/backup/backup-install.sh \
+    && chown root:root /var/www/emoncms/Modules/backup/backup-install.sh
 # Run the install script
-RUN /var/www/emoncms/Modules/backup/install.sh
+RUN /var/www/emoncms/Modules/backup/backup-install.sh
 
 # Copy root filesystem
 COPY rootfs /
