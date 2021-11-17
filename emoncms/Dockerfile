@@ -74,8 +74,9 @@ RUN chmod +x /etc/init.d/service-runner \
     && rc-service service-runner start \
     # Install the backup module
     && chmod +x /opt/emoncms/Modules/backup/install.sh \
-    && chown root:root /opt/emoncms/Modules/backup/install.sh \
-    && /opt/emoncms/Modules/backup/install.sh
+    && chown root:root /opt/emoncms/Modules/backup/install.sh
+# Run the install script
+RUN /opt/emoncms/Modules/backup/install.sh
 
 # Copy root filesystem
 COPY rootfs /
