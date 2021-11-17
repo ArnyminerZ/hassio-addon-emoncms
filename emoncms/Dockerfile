@@ -6,11 +6,14 @@ FROM ${BUILD_FROM}
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 # Setup base
-RUN \
-    apk add --no-cache \
+# Install dependencies
+RUN apk add --no-cache \
         mariadb-client \
         nginx=1.20.2-r0 \
         redis=6.2.6-r0 \
+        openrc \
+        python3 \
+        php-common \
     && apk add --no-cache \
         php7-ctype=7.4.25-r1 \
         php7-curl=7.4.25-r1 \
@@ -24,12 +27,13 @@ RUN \
         php7-zip=7.4.25-r1 \
         php7-pecl-redis=5.3.4-r0 \
         php7=7.4.25-r1 \
+        py3-pip \
         --repository=http://dl-cdn.alpinelinux.org/alpine/edge/community \
-    \
     && apk add --no-cache --virtual .build-dependencies \
-        git=2.32.0-r0 \
-    \
-    && git clone --branch 10.8.5 --depth=1 \
+        git=2.32.0-r0
+
+# Download EmonCMS and modules
+RUN git clone --branch 10.8.5 --depth=1 \
         https://github.com/emoncms/emoncms.git /var/www/emoncms ; cd /var/www/emoncms \
     && git clone --branch 2.1.5 --depth=1 \
         https://github.com/emoncms/dashboard.git /var/www/emoncms/Modules/dashboard \
@@ -39,6 +43,8 @@ RUN \
         https://github.com/emoncms/app.git /var/www/emoncms/Modules/app \
     && git clone --branch 2.1.2 --depth=1 \
         https://github.com/emoncms/device.git /var/www/emoncms/Modules/device \
+    && git clone --branch 2.3.2 --depth=1 \
+        https://github.com/emoncms/backup.git /opt/openenergymonitor/modules/backup \
     \
     && apk del --no-cache --purge .build-dependencies \
     \
@@ -51,6 +57,25 @@ RUN \
     && find /var/www/emoncms -type f -name "*.md" -depth -exec rm -f {} \; \
     && find /var/www/emoncms -type f -name ".gitignore" -depth -exec rm -f {} \; \
     && find /var/www/emoncms -type f -name ".empty" -depth -exec rm -f {} \;
+
+# Install the backup module
+# Install redis and crudini for Python
+RUN python3 -m pip install redis crudini
+# Copy the service to init.d
+COPY service-runner /etc/init.d/service-runner
+# Make the service runner executable
+RUN chmod +x /etc/init.d/service-runner \
+    && chown root:root /etc/init.d/service-runner \
+    # Add the service-runner service to RC
+    && rc-update add service-runner
+# Copy the backup install script
+COPY backup-install.sh /opt/openenergymonitor/modules/backup/backup-install.sh
+RUN \
+    # Ensure permissions for install script
+    chmod +x /opt/openenergymonitor/modules/backup/backup-install.sh \
+    && chown root:root /opt/openenergymonitor/modules/backup/backup-install.sh
+# Run the install script
+RUN /opt/openenergymonitor/modules/backup/backup-install.sh
 
 # Copy root filesystem
 COPY rootfs /
