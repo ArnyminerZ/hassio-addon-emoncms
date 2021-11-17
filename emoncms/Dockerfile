@@ -25,7 +25,7 @@ RUN apk add --no-cache \
         php7-pecl-redis=5.3.4-r0 \
         php7=7.4.25-r1 \
         --repository=http://dl-cdn.alpinelinux.org/alpine/edge/community \
-    apk add --no-cache --virtual .build-dependencies \
+    && apk add --no-cache --virtual .build-dependencies \
         git=2.32.0-r0
 
 # Install python/pip
