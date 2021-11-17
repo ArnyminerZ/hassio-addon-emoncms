@@ -8,9 +8,9 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 # Setup base
 RUN \
     apk add --no-cache \
-        mariadb-client=10.5.13 \
-        nginx=1.20.2 \
-        redis=6.2.5-r0 \
+        mariadb-client=10.6.4-r1 \
+        nginx=10.20.2-r0 \
+        redis=6.2.6-r0 \
     && apk add --no-cache \
         php7-ctype=7.4.25-r1 \
         php7-curl=7.4.25-r1 \
