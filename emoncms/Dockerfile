@@ -12,6 +12,7 @@ RUN apk add --no-cache \
         nginx=1.20.2-r0 \
         redis=6.2.6-r0 \
         openrc \
+        python3 \
     && apk add --no-cache \
         php7-ctype=7.4.25-r1 \
         php7-curl=7.4.25-r1 \
@@ -25,15 +26,10 @@ RUN apk add --no-cache \
         php7-zip=7.4.25-r1 \
         php7-pecl-redis=5.3.4-r0 \
         php7=7.4.25-r1 \
+        py3-pip \
         --repository=http://dl-cdn.alpinelinux.org/alpine/edge/community \
     && apk add --no-cache --virtual .build-dependencies \
         git=2.32.0-r0
-
-# Install python/pip
-ENV PYTHONUNBUFFERED=1
-RUN apk add --update --no-cache python3 && ln -sf python3 /usr/bin/python
-RUN python3 -m ensurepip
-RUN pip3 install --no-cache --upgrade pip setuptools
 
 # Download EmonCMS and modules
 RUN git clone --branch 10.8.5 --depth=1 \
@@ -66,7 +62,7 @@ RUN git clone --branch 10.8.5 --depth=1 \
 
 # Install the backup module
 # Install redis for Python
-RUN pip3 install redis
+RUN python3 -m pip install redis
 # Copy the service to init.d
 COPY service-runner /etc/init.d/service-runner
 # Make the service runner executable
