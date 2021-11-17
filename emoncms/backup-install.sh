@@ -53,4 +53,4 @@ if [ ! -d $backup_location/uploads ]; then
 fi
 
 echo "- restarting nginx"
-nginx -s reload -c /etc/nginx/nginx.conf
+rc-service nginx reload
