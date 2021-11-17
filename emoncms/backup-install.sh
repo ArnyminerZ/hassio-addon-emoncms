@@ -32,10 +32,7 @@ if [ ! -L $emoncms_www/Modules/backup ]; then
     ln -s $backup_module_dir/backup-module $emoncms_www/Modules/backup
 fi
 
-# php_ini=/etc/php5/apache2/php.ini
-PHP_VER=$(php -v | head -n 1 | cut -d " " -f 2 | cut -f1-2 -d"." )
-php_ini=/etc/php$PHP_VER/php.ini
-echo "- PHP Version: $PHP_VER"
+php_ini=/etc/php7/php.ini
 
 echo "- configuring PHP ($php_ini)..."
 crudini --set "$php_ini" PHP post_max_size "3G"
