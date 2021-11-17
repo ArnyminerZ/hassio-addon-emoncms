@@ -70,8 +70,6 @@ RUN chmod +x /etc/init.d/service-runner \
     && chown root:root /etc/init.d/service-runner \
     # Add the service-runner service to RC
     && rc-update add service-runner \
-    # Start the service-runner
-    && rc-service service-runner start \
     # Install the backup module
     && chmod +x /opt/emoncms/Modules/backup/install.sh \
     && chown root:root /opt/emoncms/Modules/backup/install.sh
