@@ -1,5 +1,7 @@
 # Home Assistant Add-on: Emoncms
 
+[![Publish](https://github.com/ArnyminerZ/hassio-addon-emoncms/actions/workflows/publish.yml/badge.svg)](https://github.com/ArnyminerZ/hassio-addon-emoncms/actions/workflows/publish.yml)
+
 ## About
 
 [Emoncms][emoncms] is a powerful open-source web-app for processing, logging and visualising energy, temperature and other environmental data.
