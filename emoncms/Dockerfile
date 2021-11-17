@@ -47,6 +47,8 @@ RUN git clone --branch 10.8.5 --depth=1 \
         https://github.com/emoncms/device.git /var/www/emoncms/Modules/device \
     && git clone --branch 2.3.2 --depth=1 \
         https://github.com/emoncms/backup.git /var/www/emoncms/Modules/backup \
+    && git clone --branch 1.3.9 --depth=1 \
+        https://github.com/openenergymonitor/EmonScripts.git /opt/openenergymonitor \
     \
     && apk del --no-cache --purge .build-dependencies \
     \
@@ -60,9 +62,6 @@ RUN git clone --branch 10.8.5 --depth=1 \
     && find /var/www/emoncms -type f -name "*.md" -depth -exec rm -f {} \; \
     && find /var/www/emoncms -type f -name ".gitignore" -depth -exec rm -f {} \; \
     && find /var/www/emoncms -type f -name ".empty" -depth -exec rm -f {} \;
-
-# Install EmonScripts
-RUN git clone https://github.com/openenergymonitor/EmonScripts.git /opt/openenergymonitor
 
 # Install the backup module
 # Install redis for Python
