@@ -5,7 +5,7 @@ openenergymonitor_dir=/opt/openenergymonitor
 
 user=root
 emoncms_www=/var/www/emoncms
-emoncms_datadir=/var/opt/emoncms
+emoncms_datadir=/var/www/emoncms
 
 # Creating backup module config.cfg file
 if [ ! -f config.cfg ]; then
@@ -34,16 +34,16 @@ fi
 
 # php_ini=/etc/php5/apache2/php.ini
 PHP_VER=$(php -v | head -n 1 | cut -d " " -f 2 | cut -f1-2 -d"." )
-php_ini=/etc/php/$PHP_VER/apache2/php.ini
+php_ini=/etc/php$PHP_VER/apache2/php.ini
 # echo "- PHP Version: $PHP_VER"
 
-echo "- creating /etc/php/$PHP_VER/mods-available/emoncmsbackup.ini"
+echo "- creating /etc/php$PHP_VER/mods-available/emoncmsbackup.ini"
 cat << EOF |
 post_max_size = 3G
 upload_max_filesize = 3G
 upload_tmp_dir = ${upload_location}
 EOF
-tee /etc/php/$PHP_VER/mods-available/emoncmsbackup.ini
+tee /etc/php$PHP_VER/mods-available/emoncmsbackup.ini
 
 echo "- phpenmod emoncmsbackup"
 phpenmod emoncmsbackup
@@ -62,4 +62,4 @@ if [ ! -d $backup_location/uploads ]; then
 fi
 
 echo "- restarting nginx"
-nginx -s reload -c /conf/nginx/nginx.conf
+nginx -s reload -c /etc/nginx/nginx.conf
