@@ -22,6 +22,7 @@ RUN \
         php7-zip=7.4.25-r1 \
         php7=7.4.25-r1 \
         redis=6.2.5-r0 \
+        --repository=http://dl-cdn.alpinelinux.org/alpine/edge/community \
     \
     && apk add --no-cache --virtual .build-dependencies \
         git=2.32.0-r0 \
