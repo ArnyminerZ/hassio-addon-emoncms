@@ -13,6 +13,7 @@ RUN apk add --no-cache \
         redis=6.2.6-r0 \
         openrc \
         python3 \
+        php-common \
     && apk add --no-cache \
         php7-ctype=7.4.25-r1 \
         php7-curl=7.4.25-r1 \
@@ -43,9 +44,7 @@ RUN git clone --branch 10.8.5 --depth=1 \
     && git clone --branch 2.1.2 --depth=1 \
         https://github.com/emoncms/device.git /var/www/emoncms/Modules/device \
     && git clone --branch 2.3.2 --depth=1 \
-        https://github.com/emoncms/backup.git /var/www/emoncms/Modules/backup \
-    && git clone --branch 1.3.9 --depth=1 \
-        https://github.com/openenergymonitor/EmonScripts.git /opt/openenergymonitor \
+        https://github.com/emoncms/backup.git /opt/openenergymonitor/modules/backup \
     \
     && apk del --no-cache --purge .build-dependencies \
     \
@@ -54,7 +53,6 @@ RUN git clone --branch 10.8.5 --depth=1 \
     && rm -f -r /var/www/emoncms/Modules/graph/.git \
     && rm -f -r /var/www/emoncms/Modules/app/.git \
     && rm -f -r /var/www/emoncms/Modules/device/.git \
-    && rm -f -r /var/www/emoncms/Modules/backup/.git \
     && find /var/www/emoncms -type f -name ".htaccess" -depth -exec rm -f {} \; \
     && find /var/www/emoncms -type f -name "*.md" -depth -exec rm -f {} \; \
     && find /var/www/emoncms -type f -name ".gitignore" -depth -exec rm -f {} \; \
@@ -71,13 +69,13 @@ RUN chmod +x /etc/init.d/service-runner \
     # Add the service-runner service to RC
     && rc-update add service-runner
 # Copy the backup install script
-COPY backup-install.sh /var/www/emoncms/Modules/backup/backup-install.sh
+COPY backup-install.sh /opt/openenergymonitor/modules/backup/backup-install.sh
 RUN \
     # Ensure permissions for install script
-    chmod +x /var/www/emoncms/Modules/backup/backup-install.sh \
-    && chown root:root /var/www/emoncms/Modules/backup/backup-install.sh
+    chmod +x /opt/openenergymonitor/modules/backup/backup-install.sh \
+    && chown root:root /opt/openenergymonitor/modules/backup/backup-install.sh
 # Run the install script
-RUN /var/www/emoncms/Modules/backup/backup-install.sh
+RUN /opt/openenergymonitor/modules/backup/backup-install.sh
 
 # Copy root filesystem
 COPY rootfs /
