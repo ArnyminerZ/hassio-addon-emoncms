@@ -59,8 +59,8 @@ RUN git clone --branch 10.8.5 --depth=1 \
     && find /var/www/emoncms -type f -name ".empty" -depth -exec rm -f {} \;
 
 # Install the backup module
-# Install redis for Python
-RUN python3 -m pip install redis
+# Install redis and crudini for Python
+RUN python3 -m pip install redis crudini
 # Copy the service to init.d
 COPY service-runner /etc/init.d/service-runner
 # Make the service runner executable
