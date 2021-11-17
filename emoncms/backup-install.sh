@@ -51,6 +51,3 @@ if [ ! -d $backup_location/uploads ]; then
     mkdir $backup_location/uploads
     chown $user:$user $backup_location/uploads -R
 fi
-
-echo "- restarting nginx"
-rc-service nginx reload
