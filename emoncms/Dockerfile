@@ -8,8 +8,10 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 # Setup base
 RUN \
     apk add --no-cache \
-        nginx=1.20.2 \
         mariadb-client=10.5.13 \
+        nginx=1.20.2 \
+        redis=6.2.5-r0 \
+    && apk add --no-cache \
         php7-ctype=7.4.25-r1 \
         php7-curl=7.4.25-r1 \
         php7-fpm=7.4.25-r1 \
@@ -21,7 +23,6 @@ RUN \
         php7-session=7.4.25-r1 \
         php7-zip=7.4.25-r1 \
         php7=7.4.25-r1 \
-        redis=6.2.5-r0 \
         --repository=http://dl-cdn.alpinelinux.org/alpine/edge/community \
     \
     && apk add --no-cache --virtual .build-dependencies \
