@@ -71,14 +71,14 @@ RUN pip3 install redis
 COPY service-runner /etc/init.d/service-runner
 # Make the service runner executable
 RUN chmod +x /etc/init.d/service-runner \
-    && chown root:root /etc/init.d/service-runner
-# Add the service-runner service to RC
-RUN rc-update add service-runner \\
+    && chown root:root /etc/init.d/service-runner \
+    # Add the service-runner service to RC
+    && rc-update add service-runner \
     # Start the service-runner
-    && rc-service service-runner start \\
+    && rc-service service-runner start \
     # Install the backup module
-    && chmod +x /opt/emoncms/Modules/backup/install.sh
-    && chown root:root /opt/emoncms/Modules/backup/install.sh
+    && chmod +x /opt/emoncms/Modules/backup/install.sh \
+    && chown root:root /opt/emoncms/Modules/backup/install.sh \
     && /opt/emoncms/Modules/backup/install.sh
 
 # Copy root filesystem
