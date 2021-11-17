@@ -39,6 +39,8 @@ RUN \
         https://github.com/emoncms/app.git /var/www/emoncms/Modules/app \
     && git clone --branch 2.1.2 --depth=1 \
         https://github.com/emoncms/device.git /var/www/emoncms/Modules/device \
+    && git clone --branch 2.3.2 --depth=1 \
+        https://github.com/emoncms/backup.git /var/www/emoncms/Modules/backup \
     \
     && apk del --no-cache --purge .build-dependencies \
     \
@@ -47,6 +49,10 @@ RUN \
     && rm -f -r /var/www/emoncms/Modules/graph/.git \
     && rm -f -r /var/www/emoncms/Modules/app/.git \
     && rm -f -r /var/www/emoncms/Modules/device/.git \
+    && rm -f -r /var/www/emoncms/Modules/backup/.git \
+    \
+    && pip3 install redis \
+    \
     && find /var/www/emoncms -type f -name ".htaccess" -depth -exec rm -f {} \; \
     && find /var/www/emoncms -type f -name "*.md" -depth -exec rm -f {} \; \
     && find /var/www/emoncms -type f -name ".gitignore" -depth -exec rm -f {} \; \
