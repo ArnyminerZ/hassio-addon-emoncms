@@ -11,6 +11,7 @@ RUN apk add --no-cache \
         mariadb-client \
         nginx=1.20.2-r0 \
         redis=6.2.6-r0 \
+        openrc \
     && apk add --no-cache \
         php7-ctype=7.4.25-r1 \
         php7-curl=7.4.25-r1 \
