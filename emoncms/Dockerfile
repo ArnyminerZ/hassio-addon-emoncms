@@ -22,6 +22,7 @@ RUN \
         php7-opcache=7.4.25-r1 \
         php7-session=7.4.25-r1 \
         php7-zip=7.4.25-r1 \
+        php7-pecl-redis=5.3.4-r0 \
         php7=7.4.25-r1 \
         --repository=http://dl-cdn.alpinelinux.org/alpine/edge/community \
     \
