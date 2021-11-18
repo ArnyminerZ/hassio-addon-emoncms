@@ -100,6 +100,3 @@ LABEL \
     org.opencontainers.image.created=${BUILD_DATE} \
     org.opencontainers.image.revision=${BUILD_REF} \
     org.opencontainers.image.version=${BUILD_VERSION}
-
-# Main Script
-CMD python3 /var/www/emoncms/Modules/backup/service-runner.py

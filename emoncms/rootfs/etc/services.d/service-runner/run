@@ -1,0 +1,7 @@
+#!/usr/bin/with-contenv bashio
+# ==============================================================================
+# Home Assistant Community Add-on: Emoncms
+# Runs the service-runner daemon
+# ==============================================================================
+bashio::log.info "Starting service-runner..."
+exec python3 /var/www/emoncms/Modules/backup/service-runner.py;
