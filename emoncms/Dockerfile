@@ -102,4 +102,4 @@ LABEL \
     org.opencontainers.image.version=${BUILD_VERSION}
 
 # Main Script
-CMD python3 /opt/openenergymonitor/service-runner.py
+CMD python3 /var/www/emoncms/Modules/backup/service-runner.py
