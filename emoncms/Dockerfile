@@ -42,15 +42,17 @@ RUN git clone --branch 10.8.5 --depth=1 \
     && git clone --branch 2.1.2 --depth=1 \
         https://github.com/emoncms/device.git /var/www/emoncms/Modules/device \
     && git clone --branch 2.3.2 --depth=1 \
-        https://github.com/emoncms/backup.git /opt/openenergymonitor/modules/backup \
+        https://github.com/emoncms/backup.git /var/www/emoncms/Modules/backup \
     \
     && apk del --no-cache --purge .build-dependencies \
     \
+    && rm -rf /var/www/emoncms/Modules/backup/install.sh
     && rm -f -r /var/www/emoncms/.git \
     && rm -f -r /var/www/emoncms/Modules/dashboard/.git \
     && rm -f -r /var/www/emoncms/Modules/graph/.git \
     && rm -f -r /var/www/emoncms/Modules/app/.git \
     && rm -f -r /var/www/emoncms/Modules/device/.git \
+    && rm -f -r /var/www/emoncms/Modules/backup/.git \
     && find /var/www/emoncms -type f -name ".htaccess" -depth -exec rm -f {} \; \
     && find /var/www/emoncms -type f -name "*.md" -depth -exec rm -f {} \; \
     && find /var/www/emoncms -type f -name ".gitignore" -depth -exec rm -f {} \; \
@@ -60,16 +62,16 @@ RUN git clone --branch 10.8.5 --depth=1 \
 # Install redis and crudini for Python
 RUN python3 -m pip install redis crudini
 # Copy the backup install script
-COPY backup-install.sh /opt/openenergymonitor/modules/backup/backup-install.sh
+COPY backup-install.sh /var/www/emoncms/Modules/backup/install.sh
 RUN \
     # Ensure permissions for install script
-    chmod +x /opt/openenergymonitor/modules/backup/backup-install.sh \
-    && chown root:root /opt/openenergymonitor/modules/backup/backup-install.sh \
+    chmod +x /var/www/emoncms/Modules/backup/install.sh \
+    && chown root:root /var/www/emoncms/Modules/backup/install.sh \
     # Run the install script
-    && /opt/openenergymonitor/modules/backup/backup-install.sh
+    && /var/www/emoncms/Modules/backup/install.sh
 
 # Copy the service-runner script
-COPY service-runner.py /opt/openenergymonitor/service-runner.py
+COPY service-runner.py /var/www/emoncms/Modules/backup/service-runner.py
 
 # Copy root filesystem
 COPY rootfs /
