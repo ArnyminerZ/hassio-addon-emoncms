@@ -19,11 +19,12 @@ if [ ! -f config.cfg ]; then
     sed -i "s~DATABASE_PATH~$emoncms_datadir~" config.cfg
     sed -i "s~BACKUP_SOURCE_PATH~$emoncms_datadir/backup/uploads~" config.cfg
     echo "- Moving config.cfg to the backup module"
-    mv config.cfg $backup_module_dir/backup-module/config.cfg
+    cp config.cfg $backup_module_dir/backup-module/config.cfg
+    cp config.cfg $emoncms_www/config.cfg
 else
     echo "- config.cfg already exists, left unmodified"
 fi
-source $backup_module_dir/backup-module/config.cfg
+source config.cfg
 
 # Load backup module configuration file
 upload_location=$backup_location/uploads
@@ -31,7 +32,7 @@ upload_location=$backup_location/uploads
 # Symlink emoncms UI (if not done so already)
 if [ ! -L $emoncms_www/Modules/backup ]; then
     echo "- symlinking backup module"
-    ln -s $backup_module_dir/backup-module $emoncms_www/Modules/backup
+    ln -s $backup_module_dir/backup-module $emoncms_www/modules/backup
 fi
 
 php_ini=/etc/php7/php.ini
