@@ -46,7 +46,7 @@ RUN git clone --branch 10.8.5 --depth=1 \
     \
     && apk del --no-cache --purge .build-dependencies \
     \
-    && rm -f -r /var/www/emoncms/tmp/backup/install.sh
+    && rm -f -r /var/www/emoncms/tmp/backup/install.sh \
     && rm -f -r /var/www/emoncms/.git \
     && rm -f -r /var/www/emoncms/Modules/dashboard/.git \
     && rm -f -r /var/www/emoncms/Modules/graph/.git \
