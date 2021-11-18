@@ -4,15 +4,31 @@
 
 This addon packages the installation allowing you to run it easily along side your existing Home Assistant installation.
 
+This fork of the addon was modified by [ArnyminerZ](https://github.com/ArnyminerZ) but all the credit goes to the [original creator](https://github.com/inverse/hassio-addon-emoncms).
+
+## Enabled Modules
+
+Currently the enabled modules are:
+* [Dashboard](https://github.com/emoncms/dashboard) at `2.1.5`.
+* [Graph](https://github.com/emoncms/graph) at `2.1.1`.
+* [App](https://github.com/emoncms/app) at `2.3.2`.
+* [Devices](https://github.com/emoncms/device) at `2.1.2`.
+* [Backup](https://github.com/emoncms/backup) at `2.3.2`.\
+  _Notes:_
+  - Implemented a custom version of the backup module installator. May cause issues. Ask for help if needed.
+  - This includes the REDIS module.
+
+Feel free to open new PRs to enable more modules.
+
 ## Installation
 
 You can install this addon like how you would any 3rd party addon.
 
 1. Navigate within your Home Assistant frontend to __Supervisor__ then __Add-on Store__
 
-2. Click the 3-dots menu at upper right, then __Repositories__ and add this repository URL: https://github.com/inverse/hassio-addon-emoncms
+2. Click the 3-dots menu at upper right, then __Repositories__ and add this repository URL: https://github.com/ArnyminerZ/hassio-addon-emoncms
 
-3. Once added, scroll down the page to find the new repository section, click on the addon titled "Emoncms"
+3. Once added, scroll down the page to find the new repository section, click on the addon titled "AMZ Emoncms"
 
 ## Configuration
 
