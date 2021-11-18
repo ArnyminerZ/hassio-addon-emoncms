@@ -1,8 +1,0 @@
-#!/sbin/openrc-run
-
-depend() {
-  need redis
-}
-
-name=$RC_SVCNAME
-command=python3 /var/www/emoncms/scripts/services/service-runner/service-runner.py
