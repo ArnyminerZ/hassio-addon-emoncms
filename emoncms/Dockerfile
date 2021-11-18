@@ -11,10 +11,7 @@ RUN apk add --no-cache \
         mariadb-client \
         nginx=1.20.2-r0 \
         redis=6.2.6-r0 \
-        openrc \
-        s6-rc \
         python3 \
-        php-common \
     && apk add --no-cache \
         php7-ctype=7.4.25-r1 \
         php7-curl=7.4.25-r1 \
@@ -62,13 +59,6 @@ RUN git clone --branch 10.8.5 --depth=1 \
 # Install the backup module
 # Install redis and crudini for Python
 RUN python3 -m pip install redis crudini
-# Copy the service to init.d
-COPY service-runner /etc/init.d/service-runner
-# Make the service runner executable
-RUN chmod +x /etc/init.d/service-runner \
-    && chown root:root /etc/init.d/service-runner \
-    # Add the service-runner service to RC
-    && rc-update add service-runner
 # Copy the backup install script
 COPY backup-install.sh /opt/openenergymonitor/modules/backup/backup-install.sh
 RUN \
@@ -77,6 +67,9 @@ RUN \
     && chown root:root /opt/openenergymonitor/modules/backup/backup-install.sh \
     # Run the install script
     && /opt/openenergymonitor/modules/backup/backup-install.sh
+
+# Copy the service-runner script
+COPY service-runner.py /opt/openenergymonitor/service-runner.py
 
 # Copy root filesystem
 COPY rootfs /
@@ -106,3 +99,6 @@ LABEL \
     org.opencontainers.image.created=${BUILD_DATE} \
     org.opencontainers.image.revision=${BUILD_REF} \
     org.opencontainers.image.version=${BUILD_VERSION}
+
+# Main Script
+CMD python /opt/openenergymonitor/service-runner.py
