@@ -12,6 +12,7 @@ RUN apk add --no-cache \
         nginx=1.20.2-r0 \
         redis=6.2.6-r0 \
         openrc \
+        s6-rc \
         python3 \
         php-common \
     && apk add --no-cache \
@@ -74,8 +75,8 @@ RUN \
     # Ensure permissions for install script
     chmod +x /opt/openenergymonitor/modules/backup/backup-install.sh \
     && chown root:root /opt/openenergymonitor/modules/backup/backup-install.sh
-# Run the install script
-RUN /opt/openenergymonitor/modules/backup/backup-install.sh
+    # Run the install script
+    && /opt/openenergymonitor/modules/backup/backup-install.sh
 
 # Copy root filesystem
 COPY rootfs /
