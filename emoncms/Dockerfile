@@ -74,7 +74,7 @@ COPY backup-install.sh /opt/openenergymonitor/modules/backup/backup-install.sh
 RUN \
     # Ensure permissions for install script
     chmod +x /opt/openenergymonitor/modules/backup/backup-install.sh \
-    && chown root:root /opt/openenergymonitor/modules/backup/backup-install.sh
+    && chown root:root /opt/openenergymonitor/modules/backup/backup-install.sh \
     # Run the install script
     && /opt/openenergymonitor/modules/backup/backup-install.sh
 
