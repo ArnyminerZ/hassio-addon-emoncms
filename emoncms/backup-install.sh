@@ -19,10 +19,10 @@ if [ ! -f config.cfg ]; then
     sed -i "s~DATABASE_PATH~$emoncms_datadir~" config.cfg
     sed -i "s~BACKUP_SOURCE_PATH~$emoncms_datadir/backup/uploads~" config.cfg
     echo "- Moving config.cfg to the backup module"
-    mkdir $emoncms_www/modules
-    ln -s config.cfg $backup_module_dir/backup-module/config.cfg
+    mkdir -p $emoncms_www/modules/backup
     ln -s config.cfg $emoncms_www/config.cfg
-    ln -s config.cfg $emoncms_www/modules/config.cfg
+    ln -s config.cfg $emoncms_www/backup/config.cfg
+    ln -s config.cfg $emoncms_www/modules/backup/config.cfg
 else
     echo "- config.cfg already exists, left unmodified"
 fi
