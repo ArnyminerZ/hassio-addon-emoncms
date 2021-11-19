@@ -30,12 +30,14 @@ def connect_redis():
 def main():
     print("Starting service-runner", flush=True)
     server = connect_redis()
+    print("Redis connection was correct.", flush=True)
     while True:
+        print("Iterating main redis loop", flush=True)
         try:
             # Get the next item from the 'service-runner' list, blocking until one exists
             packed = server.blpop(KEYS, timeout=30)
             if not packed:
-                print("Got non valid value from redis.")
+                print("Got invalid value from redis.", flush=True)
                 continue
             flag = packed[1].decode()
         except redis.exceptions.ConnectionError:
