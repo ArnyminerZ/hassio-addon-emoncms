@@ -33,8 +33,9 @@ def main():
     while True:
         try:
             # Get the next item from the 'service-runner' list, blocking until one exists
-            packed = server.blpop(KEYS)
+            packed = server.blpop(KEYS, timeout=30)
             if not packed:
+                print("Got non valid value from redis.")
                 continue
             flag = packed[1].decode()
         except redis.exceptions.ConnectionError:
