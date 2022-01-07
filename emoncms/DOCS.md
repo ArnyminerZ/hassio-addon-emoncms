@@ -41,6 +41,7 @@ log_level: info
 ssl: false
 certfile: fullchain.pem
 keyfile: privkey.pem
+redis: true
 ```
 
 __Note__: _This is just an example, don't copy and past it! Create your own!_
@@ -95,6 +96,31 @@ Only applies if a remote MySQL database is used, the password of the above user.
 Only applies if a remote MySQL database is used, the port that the database
 server is listening on.
 
+### Option: `redis`
+
+Enables/Disables Redis support for EmonCMS.
+Set it `true` to enable it, `false` otherwise.
+
+### Option: `remote_redis_host`
+
+Sets a remote host for the Redis server. If not set, the local Redis server will be used.
+
+### Option: `remote_redis_port`
+
+Sets a port for the set remote Redis server. Only used if `remote_redis_host` is not empty.
+
+### Option: `remote_redis_auth`
+
+Sets auth for the set remote Redis server. Only used if `remote_redis_host` is not empty.
+
+### Option: `remote_redis_dbnum`
+
+Sets a *dbnum* for the set remote Redis server. Only used if `remote_redis_host` is not empty.
+
+### Option: `remote_redis_prefix`
+
+Sets a table prefix for the set remote Redis server. Only used if `remote_redis_host` is not empty.
+
 ## Database usage
 
 By default, Emoncms will automatically use and configure the Home Assistant
@@ -107,6 +133,7 @@ that there is no easy upgrade path between the two options.
 Please report any issues.
 
 - [EmonESP][1] does not currently support parsing the port from the "Emoncms Server" input field, making it complex to map this addon on a non-standard HTTP port. See [issue][2]
+- Backup module doesn't actually work. It shows up in the interface, but seems to do nothing. We are working into fixing it.
 
 ## License
 
