@@ -40,9 +40,14 @@ fi
 php_ini=/etc/php7/php.ini
 
 echo "- configuring PHP ($php_ini)..."
-crudini --set "$php_ini" PHP post_max_size "3G"
-crudini --set "$php_ini" PHP upload_max_filesize "3G"
-crudini --set "$php_ini" PHP upload_tmp_dir "$upload_location"
+python3 -c "import configparser
+config = configparser.ConfigParser()
+config.read('$php_ini')
+config.set('PHP', 'post_max_size', '3G')
+config.set('PHP', 'upload_max_filesize', '3G')
+config.set('PHP', 'upload_tmp_dir', '$upload_location')
+with open('$php_ini', 'w') as configfile:
+    config.write(configfile)"
 
 # Create uploads folder
 if [ ! -d $backup_location ]; then
