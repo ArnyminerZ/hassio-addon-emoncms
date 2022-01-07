@@ -26,6 +26,7 @@ RUN \
         php7=7.4.27-r0 \
         php7-pecl-redis=5.3.5-r0 \
         py3-pip \
+        py3-redis \
         --repository=http://dl-cdn.alpinelinux.org/alpine/edge/community \
     && apk add --no-cache --virtual .build-dependencies \
         git=2.32.0-r0
@@ -58,8 +59,6 @@ RUN git clone --branch 10.8.5 --depth=1 \
     && find /var/www/emoncms -type f -name ".empty" -depth -exec rm -f {} \;
 
 # Install the backup module
-# Install redis and crudini for Python
-RUN python3 -m ensurepip && python3 -m pip install --upgrade pip && python3 -m pip install redis crudini
 # Copy the backup install script
 COPY backup-install.sh /var/www/emoncms/tmp/backup/install.sh
 RUN \
