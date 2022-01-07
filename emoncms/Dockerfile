@@ -25,8 +25,6 @@ RUN \
         php7-zip=7.4.27-r0 \
         php7=7.4.27-r0 \
         php7-pecl-redis=5.3.5-r0 \
-        py3-pip \
-        py3-redis \
         --repository=http://dl-cdn.alpinelinux.org/alpine/edge/community \
     && apk add --no-cache --virtual .build-dependencies \
         git=2.32.0-r0
@@ -60,6 +58,13 @@ RUN git clone --branch 10.8.5 --depth=1 \
 
 # Install the backup module
 # Copy the backup install script
+RUN \
+    # Ensure pip is available
+    python3 -m ensurepip \
+    # Upgrade pip to the latest version
+    && python3 -m pip install --upgrade pip \
+    # Install redis
+    && python3 -m pip install redis
 COPY backup-install.sh /var/www/emoncms/tmp/backup/install.sh
 RUN \
     # Ensure permissions for install script
