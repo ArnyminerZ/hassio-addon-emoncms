@@ -34,7 +34,7 @@ def connect_redis():
 
 def main():
     if not os.getenv('REDIS_ENABLED'):
-        logging.warn("Redis is disabled. Won't start runner.")
+        logging.warning("Redis is disabled. Won't start runner.")
         return
 
     logging.info("Starting service-runner", flush=True)
