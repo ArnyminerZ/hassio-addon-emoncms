@@ -6,25 +6,25 @@ FROM ${BUILD_FROM}
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 # Setup base
-# Install dependencies
-RUN apk add --no-cache \
-        mariadb-client \
+RUN \
+    apk add --no-cache \
         nginx=1.20.2-r0 \
+        mariadb-client=10.6.4-r2 \
         redis=6.2.6-r0 \
         python3 \
     && apk add --no-cache \
-        php7-ctype=7.4.25-r1 \
-        php7-curl=7.4.25-r1 \
-        php7-fpm=7.4.25-r1 \
-        php7-gettext=7.4.25-r1 \
-        php7-json=7.4.25-r1 \
-        php7-mbstring=7.4.25-r1 \
-        php7-mysqli=7.4.25-r1 \
-        php7-opcache=7.4.25-r1 \
-        php7-session=7.4.25-r1 \
-        php7-zip=7.4.25-r1 \
-        php7-pecl-redis=5.3.4-r0 \
-        php7=7.4.25-r1 \
+        php7-ctype=   7.4.27-r0 \
+        php7-curl=    7.4.27-r0 \
+        php7-fpm=     7.4.27-r0 \
+        php7-gettext= 7.4.27-r0 \
+        php7-json=    7.4.27-r0 \
+        php7-mbstring=7.4.27-r0 \
+        php7-mysqli=  7.4.27-r0 \
+        php7-opcache= 7.4.27-r0 \
+        php7-session= 7.4.27-r0 \
+        php7-zip=     7.4.27-r0 \
+        php7=         7.4.27-r0 \
+        php7-pecl-redis=5.3.5-r0 \
         py3-pip \
         --repository=http://dl-cdn.alpinelinux.org/alpine/edge/community \
     && apk add --no-cache --virtual .build-dependencies \
