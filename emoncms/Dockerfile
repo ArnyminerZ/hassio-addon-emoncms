@@ -13,17 +13,17 @@ RUN \
         redis=6.2.6-r0 \
         python3 \
     && apk add --no-cache \
-        php7-ctype=   7.4.27-r0 \
-        php7-curl=    7.4.27-r0 \
-        php7-fpm=     7.4.27-r0 \
-        php7-gettext= 7.4.27-r0 \
-        php7-json=    7.4.27-r0 \
+        php7-ctype=7.4.27-r0 \
+        php7-curl=7.4.27-r0 \
+        php7-fpm=7.4.27-r0 \
+        php7-gettext=7.4.27-r0 \
+        php7-json=7.4.27-r0 \
         php7-mbstring=7.4.27-r0 \
-        php7-mysqli=  7.4.27-r0 \
-        php7-opcache= 7.4.27-r0 \
-        php7-session= 7.4.27-r0 \
-        php7-zip=     7.4.27-r0 \
-        php7=         7.4.27-r0 \
+        php7-mysqli=7.4.27-r0 \
+        php7-opcache=7.4.27-r0 \
+        php7-session=7.4.27-r0 \
+        php7-zip=7.4.27-r0 \
+        php7=7.4.27-r0 \
         php7-pecl-redis=5.3.5-r0 \
         py3-pip \
         --repository=http://dl-cdn.alpinelinux.org/alpine/edge/community \
