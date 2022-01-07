@@ -182,3 +182,7 @@ else
 fi
 
 /usr/bin/php7 scripts/emoncms-cli admin:dbupdate
+
+# Start the service runner
+bashio::log.info "Starting service runner..."
+python3 /var/www/emoncms/Modules/backup/service-runner.py
