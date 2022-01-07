@@ -10,32 +10,38 @@ declare mysql_username
 declare mysql_password
 declare mysql_port
 
+declare remote_redis_host
+declare remote_redis_port
+declare remote_redis_auth
+declare remote_redis_dbnum
+declare remote_redis_prefix
+
 if bashio::config.has_value "remote_mysql_host"; then
     if ! bashio::config.has_value 'remote_mysql_database'; then
-    bashio::exit.nok \
-        "Remote database has been specified but no database is configured"
+        bashio::exit.nok \
+            "Remote database has been specified but no database is configured"
     fi
 
     if ! bashio::config.has_value 'remote_mysql_username'; then
-    bashio::exit.nok \
-        "Remote database has been specified but no username is configured"
+        bashio::exit.nok \
+            "Remote database has been specified but no username is configured"
     fi
 
     if ! bashio::config.has_value 'remote_mysql_password'; then
-    bashio::log.fatal \
-        "Remote database has been specified but no password is configured"
+        bashio::log.fatal \
+            "Remote database has been specified but no password is configured"
     fi
 
     if ! bashio::config.exists 'remote_mysql_port'; then
-    bashio::exit.nok \
-        "Remote database has been specified but no port is configured"
+        bashio::exit.nok \
+            "Remote database has been specified but no port is configured"
     fi
 else
     if ! bashio::services.available 'mysql'; then
         bashio::log.fatal \
-        "Local database access should be provided by the MariaDB addon"
+            "Local database access should be provided by the MariaDB addon"
         bashio::exit.nok \
-        "Please ensure it is installed and started"
+            "Please ensure it is installed and started"
     fi
 
     mysql_host=$(bashio::services "mysql" "host")
@@ -48,7 +54,6 @@ else
     bashio::log.warning "Please ensure this is included in your backups"
     bashio::log.warning "Uninstalling the MariaDB addon will remove any data"
 
-
     bashio::log.info "Creating database for Emoncms if required"
 
     mysql \
@@ -57,9 +62,32 @@ else
         -e "CREATE DATABASE IF NOT EXISTS \`${mysql_database}\` ;"
 fi
 
+if [ $(bashio::config "redis") == 'true' ]; then
+    if bashio::config.has_value "remote_redis_host"; then
+        # All options must have been set
+        if ! bashio::config.has_value 'remote_redis_port'; then
+            bashio::exit.nok \
+                "Remote redis host has been specified but no port is configured"
+        fi
+
+        if ! bashio::config.has_value 'remote_redis_auth'; then
+            bashio::exit.nok \
+                "Remote redis host has been specified but no auth is configured"
+        fi
+
+        if ! bashio::config.has_value 'remote_redis_dbnum'; then
+            bashio::exit.nok \
+                "Remote redis host has been specified but no dbnum is configured"
+        fi
+
+        if ! bashio::config.has_value 'remote_redis_prefix'; then
+            bashio::exit.nok \
+                "Remote redis host has been specified but no prefix is configured"
+        fi
+    fi
+fi
 
 cd /var/www/emoncms
-
 
 bashio::log.info "Configuring settings.php"
 
@@ -76,8 +104,20 @@ sed -i "s/\"port\"     => 3306/\"port\"     => getenv('MYSQL_PORT')/g" settings.
 sed -i "s/\/var\/opt\/emoncms\/phpfina\//\/data\/emoncms\/phpfina\//g" settings.php
 sed -i "s/\/var\/opt\/emoncms\/phptimeseries\//\/data\/emoncms\/phptimeseries\//g" settings.php
 
-# Enable Redis
-sed -i '/"redis"=>array($/{N;s/\('"'"'enabled'"'"' => \)false/\1true/}' settings.php
+# Enable Redis, and set env options
+python3 -c "# Read in the file
+with open('default-settings.php', 'r') as file :
+    filedata = file.read()
+
+# Replace the target string
+filedata = filedata.replace(
+    '\"redis\"=>array(\n    \'enabled\' => false,\n    \'host\'    => \'localhost\',\n    \'port\'    => 6379,\n    \'auth\'    => \'\',\n    \'dbnum\'   => \'\',\n    \'prefix\'  => \'emoncms\'',
+    '\"redis\"=>array(\n    \'enabled\' => getenv(\'REDIS_ENABLED\'),\n    \'host\'    => getenv(\'REDIS_HOST\'),\n    \'port\'    => getenv(\'REDIS_PORT\'),\n    \'auth\'    => getenv(\'REDIS_AUTH\'),\n    \'dbnum\'   => getenv(\'REDIS_DBNUM\'),\n    \'prefix\'  => getenv(\'REDIS_PREFIX\')'
+)
+
+# Write the file out again
+with open('settings.php', 'w') as file:
+    file.write(filedata)"
 
 # Configure logging
 bashio::log.info "Setting up logging"
@@ -113,7 +153,7 @@ export MYSQL_USERNAME
 export MYSQL_PASSWORD
 export MYSQL_PORT
 
-if bashio::config.has_value 'remote_mysql_host';then
+if bashio::config.has_value 'remote_mysql_host'; then
     MYSQL_HOST=$(bashio::config "remote_mysql_host")
     MYSQL_NAME=$(bashio::config "remote_mysql_database")
     MYSQL_USERNAME=$(bashio::config "remote_mysql_username")
@@ -125,6 +165,28 @@ else
     MYSQL_USERNAME=$(bashio::services "mysql" "username")
     MYSQL_PASSWORD=$(bashio::services "mysql" "password")
     MYSQL_PORT=$(bashio::services "mysql" "port")
+fi
+
+export REDIS_ENABLED
+export REDIS_HOST
+export REDIS_PORT
+export REDIS_AUTH
+export REDIS_DBNUM
+export REDIS_PREFIX
+
+REDIS_ENABLED=$(bashio::config "redis")
+if bashio::config.has_value 'remote_redis_host'; then
+    REDIS_HOST=$(bashio::config "remote_redis_host")
+    REDIS_PORT=$(bashio::config "remote_redis_port")
+    REDIS_AUTH=$(bashio::config "remote_redis_auth")
+    REDIS_DBNUM=$(bashio::config "remote_redis_dbnum")
+    REDIS_PREFIX=$(bashio::config "remote_redis_prefix")
+else
+    REDIS_HOST=localhost
+    REDIS_PORT=6379
+    REDIS_AUTH=""
+    REDIS_DBNUM=""
+    REDIS_PREFIX="emoncms"
 fi
 
 php scripts/emoncms-cli admin:dbupdate
