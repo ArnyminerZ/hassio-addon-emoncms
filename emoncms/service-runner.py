@@ -35,20 +35,20 @@ def connect_redis():
         time.sleep(30)
 
 
-def routine():
+def routine(server):
     try:
         # Get the next item from the 'service-runner' list, blocking until one exists
         packed = server.blpop(KEYS)
         if not packed:
             # Start again
-            redis_schedule.enter(0, 1, routine, (sc,))
+            redis_schedule.enter(0, 1, routine, kwargs={'server': server})
             return
         flag = packed[1].decode()
     except redis.exceptions.ConnectionError:
         logging.error("Connection to redis server lost, attempting to reconnect", flush=True)
         server = connect_redis()
         # Start again
-        redis_schedule.enter(0, 1, routine, (sc,))
+        redis_schedule.enter(0, 1, routine, kwargs={'server': server})
         return
 
     logging.info("Got flag:", flag, flush=True)
@@ -65,7 +65,7 @@ def routine():
                 f.write("Error running [%s]" % script)
                 f.write("Exception occurred: %s" % exc)
                 # Start again
-                redis_schedule.enter(0, 1, routine, (sc,))
+                redis_schedule.enter(0, 1, routine, kwargs={'server': server})
                 return
     else:
         script = flag
@@ -74,12 +74,12 @@ def routine():
             subprocess.call(shlex.split(script), stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
         except Exception as exc:
             # Start again
-            redis_schedule.enter(0, 1, routine, (sc,))
+            redis_schedule.enter(0, 1, routine, kwargs={'server': server})
             return
 
     logging.info("COMPLETE:", script, flush=True)
 
-    redis_schedule.enter(0, 1, routine, (sc,))
+    redis_schedule.enter(0, 1, routine, kwargs={'server': server})
 
 
 def main():
@@ -90,7 +90,7 @@ def main():
     logging.info("Starting service-runner", flush=True)
     server = connect_redis()
 
-    redis_schedule.enter(0, 1, routine, (s,))
+    redis_schedule.enter(0, 1, routine, kwargs={'server': server})
     redis_schedule.run()
 
 
