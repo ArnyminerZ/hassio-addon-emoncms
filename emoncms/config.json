@@ -1,6 +1,6 @@
 {
   "name": "AMZ Emoncms",
-  "version": "0.5.8-pre4",
+  "version": "0.5.8-pre5",
   "slug": "emoncms",
   "description": "Emoncms is a powerful open-source web-app for processing, logging and visualising energy, temperature and other environmental data.",
   "url": "https://github.com/ArnyminerZ/hassio-addon-emoncms",
@@ -19,7 +19,10 @@
   "options": {
     "ssl": true,
     "certfile": "fullchain.pem",
-    "keyfile": "privkey.pem"
+    "keyfile": "privkey.pem",
+    "redis": false,
+    "remote_redis_port": 6379,
+    "remote_redis_prefix": "emoncms"
   },
   "schema": {
     "log_level": "list(trace|debug|info|notice|warning|error|fatal)?",
@@ -30,7 +33,13 @@
     "remote_mysql_database": "str?",
     "remote_mysql_username": "str?",
     "remote_mysql_password": "str?",
-    "remote_mysql_port": "int?"
+    "remote_mysql_port": "int?",
+    "redis": "bool",
+    "remote_redis_host": "str?",
+    "remote_redis_port": "int?",
+    "remote_redis_auth": "str?",
+    "remote_redis_dbnum": "str?",
+    "remote_redis_prefix": "str?"
   },
   "image": "arnyminerz/hassio-emoncms-{arch}"
 }
