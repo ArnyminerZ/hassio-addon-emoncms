@@ -59,7 +59,7 @@ RUN git clone --branch 10.8.5 --depth=1 \
 
 # Install the backup module
 # Install redis and crudini for Python
-RUN pip3 install redis crudini
+RUN python3 -m ensurepip && python3 -m pip install redis crudini
 # Copy the backup install script
 COPY backup-install.sh /var/www/emoncms/tmp/backup/install.sh
 RUN \
