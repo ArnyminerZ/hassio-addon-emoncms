@@ -13,8 +13,11 @@ import shlex
 import redis
 import os
 import logging
+import sched
 
 KEYS = ["service-runner", "emoncms:service-runner"]
+
+redis_schedule = sched.scheduler(time.time, time.sleep)
 
 
 def connect_redis():
@@ -32,6 +35,53 @@ def connect_redis():
         time.sleep(30)
 
 
+def routine():
+    try:
+        # Get the next item from the 'service-runner' list, blocking until one exists
+        packed = server.blpop(KEYS)
+        if not packed:
+            # Start again
+            redis_schedule.enter(0, 1, routine, (sc,))
+            return
+        flag = packed[1].decode()
+    except redis.exceptions.ConnectionError:
+        logging.error("Connection to redis server lost, attempting to reconnect", flush=True)
+        server = connect_redis()
+        # Start again
+        redis_schedule.enter(0, 1, routine, (sc,))
+        return
+
+    logging.info("Got flag:", flag, flush=True)
+    if ">" in flag:
+        script, logfile = flag.split(">")
+        logging.info("STARTING:", script, '&>', logfile, flush=True)
+        # Got a cmdline, now run it.
+        with open(logfile, "w") as f:
+            try:
+                subprocess.call(shlex.split(script), stdout=f, stderr=f)
+            except Exception as exc:
+                # If an error occurs running the subprocess, add the error to
+                # the specified logfile
+                f.write("Error running [%s]" % script)
+                f.write("Exception occurred: %s" % exc)
+                # Start again
+                redis_schedule.enter(0, 1, routine, (sc,))
+                return
+    else:
+        script = flag
+        logging.info("STARTING:", script, flush=True)
+        try:
+            subprocess.call(shlex.split(script), stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
+        except Exception as exc:
+            # Start again
+            redis_schedule.enter(0, 1, routine, (sc,))
+            return
+
+    logging.info("COMPLETE:", script, flush=True)
+
+    redis_schedule.enter(0, 1, routine, (sc,))
+
+
 def main():
     if not os.getenv('REDIS_ENABLED'):
         logging.warning("Redis is disabled. Won't start runner.")
@@ -39,41 +89,9 @@ def main():
 
     logging.info("Starting service-runner", flush=True)
     server = connect_redis()
-    while True:
-        try:
-            # Get the next item from the 'service-runner' list, blocking until one exists
-            packed = server.blpop(KEYS)
-            if not packed:
-                continue
-            flag = packed[1].decode()
-        except redis.exceptions.ConnectionError:
-            logging.error("Connection to redis server lost, attempting to reconnect", flush=True)
-            server = connect_redis()
-            continue
 
-        logging.info("Got flag:", flag, flush=True)
-        if ">" in flag:
-            script, logfile = flag.split(">")
-            logging.info("STARTING:", script, '&>', logfile, flush=True)
-            # Got a cmdline, now run it.
-            with open(logfile, "w") as f:
-                try:
-                    subprocess.call(shlex.split(script), stdout=f, stderr=f)
-                except Exception as exc:
-                    # If an error occurs running the subprocess, add the error to
-                    # the specified logfile
-                    f.write("Error running [%s]" % script)
-                    f.write("Exception occurred: %s" % exc)
-                    continue
-        else:
-            script = flag
-            logging.info("STARTING:", script, flush=True)
-            try:
-                subprocess.call(shlex.split(script), stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
-            except Exception as exc:
-                continue
-
-        logging.info("COMPLETE:", script, flush=True)
+    redis_schedule.enter(0, 1, routine, (s,))
+    redis_schedule.run()
 
 
 if __name__ == "__main__":

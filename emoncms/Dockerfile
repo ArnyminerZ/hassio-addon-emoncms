@@ -64,7 +64,9 @@ RUN \
     # Upgrade pip to the latest version
     && python3 -m pip install --upgrade pip \
     # Install redis
-    && python3 -m pip install redis
+    && python3 -m pip install redis \
+    # Install sched for scheduling background tasks
+    && python3 -m pip install sched
 COPY backup-install.sh /var/www/emoncms/tmp/backup/install.sh
 RUN \
     # Ensure permissions for install script
