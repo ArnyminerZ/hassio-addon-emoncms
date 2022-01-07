@@ -181,4 +181,4 @@ else
     REDIS_PREFIX="emoncms"
 fi
 
-php scripts/emoncms-cli admin:dbupdate
+/usr/bin/php7 scripts/emoncms-cli admin:dbupdate
