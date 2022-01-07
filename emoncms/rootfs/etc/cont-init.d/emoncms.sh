@@ -70,16 +70,6 @@ if [ $(bashio::config "redis") == 'true' ]; then
                 "Remote redis host has been specified but no port is configured"
         fi
 
-        if ! bashio::config.has_value 'remote_redis_auth'; then
-            bashio::exit.nok \
-                "Remote redis host has been specified but no auth is configured"
-        fi
-
-        if ! bashio::config.has_value 'remote_redis_dbnum'; then
-            bashio::exit.nok \
-                "Remote redis host has been specified but no dbnum is configured"
-        fi
-
         if ! bashio::config.has_value 'remote_redis_prefix'; then
             bashio::exit.nok \
                 "Remote redis host has been specified but no prefix is configured"
