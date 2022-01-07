@@ -62,7 +62,7 @@ else
         -e "CREATE DATABASE IF NOT EXISTS \`${mysql_database}\` ;"
 fi
 
-if [ $(bashio::config "redis") == 'true' ]; then
+if [ "$(bashio::config \"redis\")" == 'true' ]; then
     if bashio::config.has_value "remote_redis_host"; then
         # All options must have been set
         if ! bashio::config.has_value 'remote_redis_port'; then
