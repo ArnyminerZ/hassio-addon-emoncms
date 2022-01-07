@@ -9,7 +9,7 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN \
     apk add --no-cache \
         nginx=1.20.2-r0 \
-        mariadb-client=10.6.4-r2 \
+        mariadb-client=10.5.13-r0 \
         redis=6.2.6-r0 \
         python3 \
     && apk add --no-cache \
