@@ -75,6 +75,8 @@ if [ "$(bashio::config \"redis\")" == 'true' ]; then
                 "Remote redis host has been specified but no prefix is configured"
         fi
     fi
+else
+    bashio::log.warning "Redis not enabled. This will stress more your SD card."
 fi
 
 cd /var/www/emoncms
